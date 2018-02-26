@@ -14,5 +14,9 @@ for index, valor in enumerate(lista) :
         if valor+1 > 0:
             save = valor+1
             break
-            
+
 print (save)
+
+#teste do itau
+print (sum(int(i) for i in str(2**1000)))
+#soma do algarismos de 2^1000
