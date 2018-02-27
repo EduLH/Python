@@ -5,14 +5,13 @@ tamanho = int(input())
 for i in range(0,tamanho):
     lista.append(int(input()))
 
-save = lista[-1]
 lista = sorted(lista)
+save = lista[-1]+1  #salva o ultimo+1 item, caso nao esteja faltando algo
 
-for index, valor in enumerate(lista) :
-
-    if valor+1 != lista[index+1]:
-        if valor+1 > 0:
-            save = valor+1
+for i in lista:
+    if i-1 not in lista:    #se i-1 nao estiver na lista
+        if i-1 > 0:
+            save = i-1  #ele eh o menor elemento nao presente
             break
 
 print (save)
