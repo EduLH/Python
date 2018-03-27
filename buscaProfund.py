@@ -4,18 +4,18 @@ import sys
 def bpp(grafo, inicio, fim, caminho=[]):
         caminho = caminho + [inicio]
         if inicio == fim:
-            print ("Cheguei!")
+            #print ("Cheguei!")
             return caminho
         if inicio not in grafo:
             return []
         for no in grafo[inicio]:
-            print (caminho, " -> ", no)
+            #print (caminho, " -> ", no)
             if no not in caminho:
                novo_caminho = bpp(grafo, no, fim, caminho)
                if len(novo_caminho)>0: return novo_caminho
-               print ("Falhou!")
-            else:
-               print ("Ciclo!")
+               #print ("Falhou!")
+            #else:
+               #print ("Ciclo!")
         return []
 
 
@@ -28,7 +28,7 @@ grafo = {}
 # Le a primeira linha com inicio e fim
 dados = sys.stdin.readline().strip().split(' ')
 
-print (dados)
+#print (dados)
 
 inicio, fim = dados[0], dados[1]
 
@@ -41,6 +41,6 @@ for dados in sys.stdin:
     else:
         break
 
-print (grafo)
+#print (grafo)
 
 print (bpp(grafo, inicio, fim, caminho=[]))
