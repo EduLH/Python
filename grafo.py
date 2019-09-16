@@ -25,9 +25,7 @@ def distancer(dic, at, t, sol, weight, distance):
 
     return
 
-def opEx4(dic):
-    print("informe o no que deseja fazer analise")
-    no = input()
+def opEx4(dic, no):
     sol = []
     temp = []
     cont = 0
@@ -43,13 +41,9 @@ def opEx4(dic):
                             cont = cont + 1
     return(cont/(len(dic)-1))
 
-def opEx2(dic, distance):
+def opEx2(dic, distance, atual, target):
     sol = [] #solution nodes
     weight = 1
-    print("informe o no inicial")
-    atual = input()
-    print("informe o no que deseja calcular a distancia")
-    target =input()
     distancer(dic, atual, target, sol, weight, distance)
     return(distance[target])
 
@@ -59,6 +53,19 @@ def incident (dic):
         print(len(value))
 #Check the all incident verts number on this dictionary
 
+def closeness(dic, distance, item):
+    close = 0
+    for sec_item in dic:
+        close += opEx2(dic, distance, item, sec_item)
+    return(close/(len(dic)))
+
+def meinho(dic, distance, item):
+    meiou = 0
+    for sec_item in dic:
+        if(opEx2(dic, distance, item, sec_item) <= 1):
+            meiou += 1
+    return(meiou)
+
 
 from collections import OrderedDict
 dic = OrderedDict()
@@ -67,7 +74,7 @@ print("informe o 'path' para o arquivo FBB. Exemplo: /home/MyPc/Desktop/FILE")
 path = input()
 fileInput = open(path, "r")
 #Buffering file
-
+#/home/eduardo/Área de Trabalho/frat_clean.txt
 for line in fileInput:
     k, v = line.split()
     dic.setdefault(k, [])
@@ -85,17 +92,26 @@ while int(i) == 0:
     print("informe qual operação deseja realizar:")
     print("1 - Para calcular o numero de vertices incidentes em todos os nos do grafo")
     print("2 - Para calcular a distancia minima entre dois nos")
-    print("3 - Ainda está em construção")
+    print("3 - Para saber as medidas de centralidade do nó")
     print("4 - Para saber quantos 'triangulos' existem em um no especifico")
     a = input()
     if int(a) == 1:
         incident(dic)
     if int(a) == 2:
-        print(opEx2(dic, distance))
+        print("informe o no inicial")
+        atual = input()
+        print("informe o no que deseja calcular a distancia")
+        target =input()
+        print(opEx2(dic, distance, atual, target))
     if int(a) == 3:
-        print("3 - Ainda está em construção")
+        print("informe o no que deseja calcular Closeness e Betweenness")
+        target =input()
+        print(closeness(dic, distance, target))
+        print(meinho(dic, distance, target))
     if int(a) == 4:
-        print(opEx4(dic))
+        print("informe o no que deseja fazer analise")
+        no = input()
+        print(opEx4(dic, no))
     print("deseja fazer mais alguma operação?")
     print("0 - sim; 1 - não")
     i = input()
