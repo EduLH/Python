@@ -29,20 +29,24 @@ def get_game(id_game, games):
         if game.id == id_game:
             return(game)
 
-def print_games(games):
+def dict_games(games):
+    games_dicts = []
     score = []
+    players_names = []
     for game in games:
-        print("game"+str(game.id))
-        print("Total Deaths:" + str(game.kills))
         for player in game.players:
-            score.append(player.name)
-        print(score)
-        score = []
+            players_names.append(player.name)
         for player in game.players:
             score.append(player.print_player())
-        print("Match score:")
-        print(sorted(score, key = lambda x: x[1]) )
+        game_stats={'id':game.id,
+                    'kills':game.kills,
+                    'players':players_names,
+                    'score':sorted(score, key = lambda x: x[1]) }
         score = []
+        games_dicts.append(game_stats)
+    return(games_dicts)
+
+
 
 class Game:
 
@@ -104,24 +108,23 @@ class Player:
         return hash(self.name)
 
 
+def main_func():
+    log = 'quake.log'
+    games = []
 
+    with open(log, 'r') as quake_log:
+        ids = 0
+        linStart = 0
+        linEnd = 0
+        game_line_buffer = []
 
-log = 'quake.log'
-games = []
+        for line in quake_log:
 
-with open(log, 'r') as quake_log:
-    ids = 0
-    linStart = 0
-    linEnd = 0
-    game_line_buffer = []
+            game_line_buffer.append(line)
 
-    for line in quake_log:
-
-        game_line_buffer.append(line)
-
-        if(line.split()[1] == 'ShutdownGame:' or line.split()[1] == '0:00'):
-            game = Game(game_line_buffer, ids)
-            games.append(game)
-            ids += 1
-            game_line_buffer = []
-print_games(games)
+            if(line.split()[1] == 'ShutdownGame:' or line.split()[1] == '0:00'):
+                game = Game(game_line_buffer, ids)
+                games.append(game)
+                ids += 1
+                game_line_buffer = []
+    return(dict_games(games))
