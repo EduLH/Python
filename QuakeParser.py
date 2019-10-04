@@ -23,6 +23,19 @@ def get_name_victim(line):
         i += 1
     return(name)
 
+def get_game(id_game, games):
+    for game in games:
+        if game.id == id_game:
+            return(game)
+
+def print_games(games):
+    for game in games:
+        print("game"+str(game.id))
+        print(game.kills)
+        print('*-*-*')
+        for player in game.players:
+            print(player.print_player())
+
 
 class Game:
 
@@ -30,7 +43,6 @@ class Game:
         self.kills = 0
         self.get_players(game_slice)
         self.id = class_id
-        self.make_fill_dict(self.players)
 
     def get_players(self, game_slice):
         self.players = []
@@ -50,21 +62,22 @@ class Game:
                     player = self.get_player( get_name_kill(line) )
                     player.update_kills( get_name_victim(line) )
 
-    def make_fill_dict(self, players):
-        players_kills = {}
-        for player in players:
-            players_kills[player] = 0
-
     def get_player(self, player_name):
         for player in self.players:
             if player.name == player_name:
                 return player
+
+
 
 class Player:
 
     def __init__(self, line):
         self.name = self.get_name(line)
         self.kills = 0
+
+    def print_player(self):
+        player = [self.name, self.kills]
+        return(player)
 
     def get_name(self, line):
         return(line.split('\\')[1].split('\t')[0].replace(' ', ''))
@@ -93,15 +106,14 @@ with open(log, 'r') as quake_log:
     ids = 0
     linStart = 0
     linEnd = 0
-    readingLine = 0
+    game_line_buffer = []
+
     for line in quake_log:
-        if(line.split()[1] == 'InitGame:'):
-            linStart = readingLine
-            print( '*********iniciou um game**********' )
+
+        game_line_buffer.append(line)
 
         if(line.split()[1] == 'ShutdownGame:' or line.split()[1] == '0:00'):
-            linEnd = readingLine
-            game = Game(islice(quake_log, linStart, linEnd), ids)
+            game = Game(game_line_buffer, ids)
             games.append(game)
             ids += 1
-            print('-------------end')
+            game_line_buffer = []
