@@ -2,6 +2,28 @@ import os
 from itertools import islice
 
 
+def get_name_kill(line):
+    name = ''
+    line_split = line.split()
+    i = 5
+    while(line_split[i] != 'killed'):
+        name += line_split[i]
+        i += 1
+    return(name)
+
+def get_name_victim(line):
+    name = ''
+    i = 0
+    line_split = line.split()
+    while(line_split[i] != 'killed'):
+        i += 1
+    i += 1
+    while(line_split[i] != 'by'):
+        name += line_split[i]
+        i += 1
+    return(name)
+
+
 class Game:
 
     def __init__(self, game_slice, class_id):
@@ -21,36 +43,12 @@ class Game:
 
             if(command == 'Kill:'):
                 self.kills += 1
-                print(line.split()[5])
-                print(line.split()[7])
                 if(line.split()[5] == '<world>'):
-                    print(line)
                     player = self.get_player( get_name_victim(line) )
                     player.update_kills( get_name_kill(line) )
                 else:
                     player = self.get_player( get_name_kill(line) )
                     player.update_kills( get_name_victim(line) )
-                print("------------------")
-
-    def get_name_kill(self, line):
-        name = ''
-        line_split = line.split()
-        i = 5
-        while(line_split[i] != 'killed'):
-            name += line_split[i]
-            i += 1
-        return(name)
-
-    def get_name_victim(self, line):
-        name = ''
-        i = 0
-        line_split = line.split()
-        while(line_split[i] != 'killed'):
-            i += 1
-        while(line_split[i] != 'by'):
-            name += line_split[i]
-            i += 1
-        return(name)
 
     def make_fill_dict(self, players):
         players_kills = {}
@@ -69,7 +67,7 @@ class Player:
         self.kills = 0
 
     def get_name(self, line):
-        return(line.split('\\')[1].split('\t')[0])
+        return(line.split('\\')[1].split('\t')[0].replace(' ', ''))
 
     def update_kills(self, victim):
         if(victim == self.name):
@@ -90,21 +88,20 @@ class Player:
 
 log = 'quake.log'
 games = []
+
 with open(log, 'r') as quake_log:
     ids = 0
     linStart = 0
     linEnd = 0
     readingLine = 0
     for line in quake_log:
-        l_splt = line.split()
-        if(len(l_splt) > 1):
-            if(l_splt[1] == 'InitGame:'):
-                linStart = readingLine
+        if(line.split()[1] == 'InitGame:'):
+            linStart = readingLine
+            print( '*********iniciou um game**********' )
 
-            if(l_splt[1] == 'ShutdownGame:' or l_splt[1] == '0:00'):
-                linEnd = readingLine
-                game = Game(islice(quake_log, linStart, linEnd), ids)
-                games.append(game)
-                ids += 1
-
-        readingLine = readingLine + 1
+        if(line.split()[1] == 'ShutdownGame:' or line.split()[1] == '0:00'):
+            linEnd = readingLine
+            game = Game(islice(quake_log, linStart, linEnd), ids)
+            games.append(game)
+            ids += 1
+            print('-------------end')
