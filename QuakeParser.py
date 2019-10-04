@@ -1,4 +1,5 @@
 import os
+import operator
 from itertools import islice
 
 
@@ -29,13 +30,19 @@ def get_game(id_game, games):
             return(game)
 
 def print_games(games):
+    score = []
     for game in games:
         print("game"+str(game.id))
-        print(game.kills)
-        print('*-*-*')
+        print("Total Deaths:" + str(game.kills))
         for player in game.players:
-            print(player.print_player())
-
+            score.append(player.name)
+        print(score)
+        score = []
+        for player in game.players:
+            score.append(player.print_player())
+        print("Match score:")
+        print(sorted(score, key = lambda x: x[1]) )
+        score = []
 
 class Game:
 
@@ -117,3 +124,4 @@ with open(log, 'r') as quake_log:
             games.append(game)
             ids += 1
             game_line_buffer = []
+print_games(games)
